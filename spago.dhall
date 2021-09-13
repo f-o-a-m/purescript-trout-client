@@ -1,22 +1,26 @@
-{ name =
-    "trout-client"
-, license =
-    "MPL-2.0"
-, repository =
-    "https://github.com/purescript-hyper/purescript-trout-client.git"
+{ name = "trout-client"
+, license = "MPL-2.0"
+, repository = "https://github.com/purescript-hyper/purescript-trout-client.git"
 , dependencies =
-    [ "affjax"
-    , "argonaut-generic"
-    , "hyper"
-    , "hypertrout"
-    , "jquery"
-    , "node-http"
-    , "prelude"
-    , "psci-support"
-    , "trout"
-    ]
-, packages =
-    ./packages.dhall
-, sources =
-    [ "src/**/*.purs", "test/**/*.purs" ]
+  [ "affjax"
+  , "prelude"
+  , "psci-support"
+  , "trout"
+,"aff"
+,"argonaut"
+,"arrays"
+,"bifunctors"
+,"console"
+,"effect"
+,"either"
+,"foldable-traversable"
+,"http-methods"
+,"maybe"
+,"parsing"
+,"strings"
+,"tuples"
+,"uri"
+  ]
+, packages = ./packages.dhall
+, sources = [ "src/**/*.purs", "test/**/*.purs" ]
 }
