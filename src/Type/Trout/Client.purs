@@ -1,13 +1,4 @@
-module Type.Trout.Client
-       ( class HasClients
-       , getClients
-       , class HasMethodClients
-       , getMethodClients
-       , asClients
-       , JSONClientError(..)
-       , class ClientError
-       , printError
-       ) where
+module Type.Trout.Client where
 
 import Prelude
 
