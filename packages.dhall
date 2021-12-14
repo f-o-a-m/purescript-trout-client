@@ -27,7 +27,7 @@ let overrides =
           , "these"
           , "tuples"
           ]
-        , repo = "https://github.com/kejace/purescript-trout.git"
+        , repo = "https://github.com/f-o-a-m/purescript-trout.git"
         , version = "v14"
         }
       , hyper =
@@ -56,7 +56,7 @@ let overrides =
           , "transformers"
           , "record-extra"
           ]
-        , repo = "https://github.com/kejace/hyper.git"
+        , repo = "https://github.com/f-o-a-m/hyper.git"
         , version = "v14"
         }
       , hypertrout =
@@ -84,7 +84,7 @@ let overrides =
           , "transformers"
           , "tuples"
           ]
-        , repo = "https://github.com/kejace/purescript-hypertrout.git"
+        , repo = "https://github.com/f-o-a-m/purescript-hypertrout.git"
         , version = "v14"
         }
       , js-uri =
