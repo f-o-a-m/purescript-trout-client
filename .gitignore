@@ -7,3 +7,4 @@
 /.spago
 index.js
 bundle.js
+package-lock.json
