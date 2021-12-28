@@ -22,6 +22,7 @@ import Effect.Aff (Aff)
 import Prim.Row (class Cons)
 import Type.Proxy (Proxy(..))
 import Type.Trout (type (:<|>), type (:=), type (:>), Capture, CaptureAll, Header, Lit, Method, QueryParam, QueryParams, ReqBody, Resource)
+import Type.Trout.Client.Auth (Auth)
 import Type.Trout.Client.BaseURI (BaseURI)
 import Type.Trout.Client.BaseURI (print) as BaseURI
 import Type.Trout.ContentType.HTML (HTML)
@@ -72,6 +73,7 @@ toAffjaxRequest req = defaultRequest
     [] -> ""
     segments -> "?" <> joinWith "&" (map (\(Tuple q x) -> q <> "=" <> x) segments)
 
+class HasClients :: forall k. k -> Type -> Constraint
 class HasClients r mk | r -> mk where
   getClients :: Proxy r -> RequestBuilder -> mk
 
@@ -141,6 +143,10 @@ instance hasClientsHeader :: (HasClients sub subMk, IsSymbol n, ToHeader t)
     where
     h = reflectSymbol (SProxy :: SProxy n)
 
+instance hasClientsAuth :: (ToHeader auth, HasClients sub subMk) => HasClients (Auth auth :> sub) (auth -> subMk) where
+  getClients _ req auth =
+    getClients (Proxy :: Proxy sub) (appendHeader "Authorization" (toHeader auth) req)
+
 instance hasClientsReqBody :: (HasClients sub subMk, EncodeJson a)
                               => HasClients (ReqBody a JSON :> sub) (a -> subMk) where
   getClients _ req x =
@@ -188,6 +194,7 @@ toMethod p = Method.fromString (reflectSymbol p)
 class ClientError e where
   printError :: e -> String
 
+class HasMethodClients :: forall k1 k2. Symbol -> k1 -> k2 -> Type -> Constraint
 class HasMethodClients method repr cts client | cts -> repr, cts -> client where
   getMethodClients :: SProxy method -> Proxy cts -> RequestBuilder -> client
 
