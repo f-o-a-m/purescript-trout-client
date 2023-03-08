@@ -2,7 +2,7 @@ module Type.Trout.Client where
 
 import Prelude
 
-import Affjax (Request, defaultRequest, request)
+import Affjax (AffjaxDriver, Request, defaultRequest, request)
 import Affjax (Error, printError) as Affjax
 import Affjax.RequestBody (RequestBody, toMediaType)
 import Affjax.RequestBody (json) as AXRequestBody
@@ -32,15 +32,16 @@ import Type.Trout.PathPiece (class ToPathPiece, toPathPiece)
 import Type.Trout.Record as Record
 
 type RequestBuilder =
-  { baseURI :: Maybe BaseURI
+  { driver :: AffjaxDriver
+  , baseURI :: Maybe BaseURI
   , path :: Array String
   , params :: Array (Tuple String String)
   , headers :: Array RequestHeader
   , content :: Maybe RequestBody
   }
 
-emptyRequestBuilder :: RequestBuilder
-emptyRequestBuilder = { baseURI: Nothing, path: [], params: [], headers: [], content: Nothing }
+emptyRequestBuilder :: AffjaxDriver -> RequestBuilder
+emptyRequestBuilder driver = { driver, baseURI: Nothing, path: [], params: [], headers: [], content: Nothing }
 
 appendSegment :: String -> RequestBuilder -> RequestBuilder
 appendSegment segment req =
@@ -212,7 +213,7 @@ instance hasMethodClientMethodJson
   getMethodClients method _ req = do
     toAffjaxRequest req
       # _ { method = toMethod method, responseFormat = AXResponseFormat.json }
-      # request
+      # request req.driver
       # map (bimap RequestError (_.body >>> decodeJson >>> lmap DecodeError) >>> join)
 
 instance clientErrorAffjaxError :: ClientError Affjax.Error where
@@ -224,8 +225,8 @@ instance hasMethodClientsHTMLString
   getMethodClients method _ req = do
     toAffjaxRequest req
       # _ { method = toMethod method, responseFormat = AXResponseFormat.string }
-      # request
+      # request req.driver
       # map (rmap _.body)
 
-asClients :: forall r mk. HasClients r mk => Proxy r -> mk
-asClients = flip getClients emptyRequestBuilder
+asClients :: forall r mk. HasClients r mk => AffjaxDriver -> Proxy r -> mk
+asClients driver = flip getClients (emptyRequestBuilder driver)
