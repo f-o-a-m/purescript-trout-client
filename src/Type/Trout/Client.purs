@@ -16,7 +16,7 @@ import Data.Foldable (foldl)
 import Data.HTTP.Method as Method
 import Data.Maybe (Maybe(..), fromMaybe)
 import Data.String (joinWith)
-import Data.Symbol (class IsSymbol, SProxy(..), reflectSymbol)
+import Data.Symbol (class IsSymbol, reflectSymbol)
 import Data.Tuple (Tuple(..))
 import Effect.Aff (Aff)
 import Prim.Row (class Cons)
@@ -91,7 +91,7 @@ instance hasClientsAlt :: ( HasClients c1 mk1
                           => HasClients (name := c1 :<|> c2) (Record out) where
   getClients _ req = Record.insert name first rest
     where
-      name = SProxy :: SProxy name
+      name = Proxy :: Proxy name
       first = getClients (Proxy :: Proxy c1) req
       rest = getClients (Proxy :: Proxy c2) req
 
@@ -102,7 +102,7 @@ instance hasClientsNamed :: ( HasClients c mk
                           => HasClients (name := c) (Record out) where
   getClients _ req = Record.insert name clients {}
     where
-      name = SProxy :: SProxy name
+      name = Proxy :: Proxy name
       clients = getClients (Proxy :: Proxy c) req
 
 instance hasClientsLit :: (HasClients sub subMk, IsSymbol lit)
@@ -110,7 +110,7 @@ instance hasClientsLit :: (HasClients sub subMk, IsSymbol lit)
   getClients _ req =
     getClients (Proxy :: Proxy sub) (appendSegment segment req)
     where
-      segment = reflectSymbol (SProxy :: SProxy lit)
+      segment = reflectSymbol (Proxy :: Proxy lit)
 
 instance hasClientsCapture :: (HasClients sub subMk, IsSymbol c, ToPathPiece t)
                               => HasClients (Capture c t :> sub) (t -> subMk) where
@@ -127,21 +127,21 @@ instance hasClientsQueryParam :: (HasClients sub subMk, IsSymbol c, ToPathPiece 
   getClients _ req x =
     getClients (Proxy :: Proxy sub) (foldl (flip $ appendQueryParam q) req (map toPathPiece x))
     where
-    q = reflectSymbol (SProxy :: SProxy c)
+    q = reflectSymbol (Proxy :: Proxy c)
 
 instance hasClientsQueryParams :: (HasClients sub subMk, IsSymbol c, ToPathPiece t)
                                   => HasClients (QueryParams c t :> sub) (Array t -> subMk) where
   getClients _ req x =
     getClients (Proxy :: Proxy sub) (foldl (flip $ appendQueryParam q) req (map toPathPiece x))
     where
-    q = reflectSymbol (SProxy :: SProxy c)
+    q = reflectSymbol (Proxy :: Proxy c)
 
 instance hasClientsHeader :: (HasClients sub subMk, IsSymbol n, ToHeader t)
                              => HasClients (Header n t :> sub) (t -> subMk) where
   getClients _ req x =
     getClients (Proxy :: Proxy sub) $ appendHeader h (toHeader x) req
     where
-    h = reflectSymbol (SProxy :: SProxy n)
+    h = reflectSymbol (Proxy :: Proxy n)
 
 instance hasClientsAuth :: (ToHeader auth, HasClients sub subMk) => HasClients (Auth auth :> sub) (auth -> subMk) where
   getClients _ req auth =
@@ -168,7 +168,7 @@ instance hasClientsMethodAlt :: ( IsSymbol method
   getClients _ req =
     Record.insert method first rest
     where
-      method = SProxy :: SProxy method
+      method = Proxy :: Proxy method
       cts = Proxy :: Proxy cts
       first = getMethodClients method cts req
       rest = getClients (Proxy :: Proxy methods) req
@@ -181,13 +181,13 @@ instance hasClientsMethod :: ( IsSymbol method
   getClients _ req =
     Record.insert method clients {}
     where
-      method = SProxy :: SProxy method
+      method = Proxy :: Proxy method
       cts = Proxy :: Proxy cts
       clients = getMethodClients method cts req
 
 toMethod :: forall m
           . IsSymbol m
-          => SProxy m
+          => Proxy m
          -> Either Method.Method Method.CustomMethod
 toMethod p = Method.fromString (reflectSymbol p)
 
@@ -196,7 +196,7 @@ class ClientError e where
 
 class HasMethodClients :: forall k1 k2. Symbol -> k1 -> k2 -> Type -> Constraint
 class HasMethodClients method repr cts client | cts -> repr, cts -> client where
-  getMethodClients :: SProxy method -> Proxy cts -> RequestBuilder -> client
+  getMethodClients :: Proxy method -> Proxy cts -> RequestBuilder -> client
 
 data JSONClientError
   = RequestError Affjax.Error

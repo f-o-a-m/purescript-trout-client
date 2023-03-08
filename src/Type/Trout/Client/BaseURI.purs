@@ -7,7 +7,7 @@ module Type.Trout.Client.BaseURI
 import Prelude
 import Data.Bifunctor (bimap)
 import Data.Either (Either)
-import Text.Parsing.Parser (parseErrorMessage, runParser)
+import Parsing (parseErrorMessage, runParser)
 import URI (AbsoluteURI, HierPath, Host, Path, Port, Query, UserInfo)
 import URI.AbsoluteURI (parser, print) as URI
 import URI.AbsoluteURI (AbsoluteURIOptions)

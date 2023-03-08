@@ -1,6 +1,6 @@
 let upstream =
-      https://github.com/purescript/package-sets/releases/download/psc-0.14.4-20210905/packages.dhall
-        sha256:140f3630801f2b02d5f3a405d4872e0af317e4ef187016a6b00f97d59d6275c6
+      https://github.com/purescript/package-sets/releases/download/psc-0.15.7-20230306/packages.dhall
+        sha256:0757626c7422b8b5b5b1d0df3d3628e5deac755d7f89c433a9bf89009787dcbd
 
 let overrides =
       { trout =
@@ -28,7 +28,7 @@ let overrides =
           , "tuples"
           ]
         , repo = "https://github.com/f-o-a-m/purescript-trout.git"
-        , version = "v14"
+        , version = "purs-0.15"
         }
       , hyper =
         { dependencies =
@@ -102,7 +102,7 @@ let overrides =
 let additions =
       { smolder =
         { dependencies = [ "prelude", "js-uri" ]
-        , repo = "https://github.com/nsaunders/purescript-smolder.git"
+        , repo = "https://github.com/f-o-a-m/purescript-smolder.git"
         , version = "ps-0.14"
         }
       }
